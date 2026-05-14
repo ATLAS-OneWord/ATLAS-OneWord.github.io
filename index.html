@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="ATLAS: Agentic or Latent Visual Reasoning? One Word is Enough for Both" />
+  <meta property="og:title" content="ATLAS" />
+  <meta property="og:description" content="One Word is Enough for Both" />
+  <meta property="og:image" content="asset/intro_v4_00.png" />
+  <title>ATLAS</title>
+
+  <!-- Put Optimistic.ttf in ./asset/. The .tfm file is not used by browsers. -->
+  <style>
+    @font-face {
+      font-family: "Optimistic";
+      src: url("asset/Optimistic.ttf") format("truetype");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #fbfaf7;
+      --paper: rgba(255, 255, 255, 0.82);
+      --ink: #171a22;
+      --muted: #667085;
+      --line: rgba(23, 26, 34, 0.10);
+      --metablue: #1877f2;
+      --cyan: #24c8bd;
+      --green: #0f9f7a;
+      --yellow: #f4c76b;
+      --shadow: 0 18px 58px rgba(24, 119, 242, 0.10);
+      --max: 1080px;
+      --r-xl: 26px;
+      --r-lg: 20px;
+      --r-md: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(36, 200, 189, 0.13), transparent 32%),
+        radial-gradient(circle at 88% 4%, rgba(24, 119, 242, 0.10), transparent 34%),
+        radial-gradient(circle at 54% 92%, rgba(244, 199, 107, 0.11), transparent 34%),
+        var(--bg);
+      font-family: "Optimistic", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    .container { width: min(var(--max), calc(100% - 40px)); margin: 0 auto; }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+      box-shadow: 0 8px 26px rgba(16, 24, 40, 0.035);
+    }
+    .nav-inner {
+      min-height: 98px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-only { padding: 8px 0; }
+    .meta-logo {
+      width: 92px;
+      height: 92px;
+      display: grid;
+      place-items: center;
+      overflow: visible;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+    .meta-logo img {
+      width: 92px;
+      height: 92px;
+      object-fit: contain;
+    }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .nav-links a:hover { color: var(--ink); }
+
+    .hero { padding: 54px 0 26px; text-align: center; }
+    h1 {
+      margin: 0 auto;
+      max-width: 1080px;
+      font-size: clamp(24px, 3.25vw, 42px);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      font-weight: 850;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .title-logo {
+      width: 1.42em;
+      height: 1.42em;
+      object-fit: contain;
+      display: inline-block;
+      flex: 0 0 auto;
+      transform: translateY(0.03em);
+    }
+    .atlas-blue { color: var(--metablue); }
+    .grad {
+      background: linear-gradient(100deg, var(--metablue), #139eac 55%, var(--green));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .tagline {
+      margin: 14px auto 0;
+      max-width: 760px;
+      color: #475467;
+      letter-spacing: -0.045em;
+    }
+    .tagline.emphasis {
+      font-size: clamp(24px, 3.25vw, 42px);
+      line-height: 1.08;
+      font-weight: 850;
+    }
+    .authors {
+      margin: 24px auto 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+    .authors b { color: var(--ink); }
+    .authors a {
+      color: var(--ink);
+      font-weight: 800;
+      border-bottom: 1px solid rgba(24, 119, 242, 0.25);
+    }
+    .authors a:hover { color: var(--metablue); }
+    .aff { margin-top: 5px; font-size: 16px; }
+
+    .buttons {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 11px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 44px;
+      padding: 0 17px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 10px 28px rgba(16, 24, 40, 0.05);
+      font-size: 15px;
+      font-weight: 800;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(24, 119, 242, .28); }
+    .btn.primary { color: white; background: var(--metablue); border-color: transparent; }
+
+    .hero-figure {
+      margin: 34px auto 0;
+      max-width: 920px;
+      padding: 12px;
+      border-radius: var(--r-xl);
+      border: 1px solid var(--line);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+    .hero-figure img {
+      width: 100%;
+      border-radius: 18px;
+      background: #f4f7fb;
+    }
+    .caption {
+      margin: 10px 6px 0;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    section { padding: 42px 0; }
+    .section-title { margin-bottom: 20px; }
+    .paper-heading {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(22px, 2.55vw, 30px);
+      line-height: 1.1;
+      letter-spacing: -0.035em;
+      font-weight: 850;
+      text-transform: none;
+    }
+    .paper-heading.small-title {
+      font-size: clamp(20px, 2.35vw, 28px);
+    }
+
+    .method-block { margin-top: 24px; }
+    .method-block:first-of-type { margin-top: 0; }
+    .method-heading {
+      margin-bottom: 14px;
+    }
+    .method-heading h3 {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(22px, 2.55vw, 30px);
+      line-height: 1.1;
+      letter-spacing: -0.035em;
+      font-weight: 850;
+    }
+    .method-heading h3.atlas-brand {
+      color: var(--metablue);
+    }
+
+    .figure {
+      max-width: 920px;
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      border-radius: var(--r-xl);
+      background: rgba(255, 255, 255, 0.78);
+      padding: 12px;
+      box-shadow: 0 16px 48px rgba(16, 24, 40, 0.05);
+    }
+    .figure img { width: 100%; border-radius: 18px; background: #f4f7fb; }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: 0 16px 48px rgba(16, 24, 40, 0.05);
+    }
+    .table-wrap.wide table { min-width: 1120px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 11px 13px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+    th {
+      background: rgba(24, 119, 242, 0.045);
+      color: #475467;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .group-row td {
+      padding: 10px 13px;
+      background: rgba(24, 119, 242, 0.075);
+      color: #344054;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    strong { color: var(--metablue); }
+
+    .bibtex {
+      margin: 0;
+      padding: 20px;
+      overflow-x: auto;
+      border-radius: var(--r-lg);
+      background: #111827;
+      color: #eef2f7;
+      font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      box-shadow: 0 22px 64px rgba(16, 24, 40, 0.18);
+    }
+
+    footer {
+      padding: 28px 0 50px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    @media (max-width: 1080px) {
+      h1 { white-space: normal; }
+    }
+
+    @media (max-width: 860px) {
+      .container { width: min(100% - 28px, var(--max)); }
+      .nav-inner { min-height: 82px; }
+      .meta-logo { width: 70px; height: 70px; }
+      .meta-logo img { width: 70px; height: 70px; }
+      .nav-links { display: none; }
+      .hero { padding-top: 42px; }
+      h1 { display: block; }
+      .title-logo { margin: 0 auto 8px; }
+      .method-heading { display: block; }
+      table { font-size: 13px; }
+      th, td { padding: 10px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!--
+    Local files (./asset/):
+    Optimistic.ttf
+    logometa_00.png
+    intro_v4_00.png
+    pipe_sep_00.png
+    lagrpo_00.png
+    vis1_part1_00.png
+    vis_attn1_00.png
+  -->
+
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a class="brand logo-only" href="#top" aria-label="Meta">
+        <span class="meta-logo" aria-hidden="true">
+          <img src="asset/logometa_00.png" alt="" />
+        </span>
+      </a>
+      <div class="nav-links">
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#visualization">Visualization</a>
+        <a href="#citation">Citation</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <header class="hero">
+      <div class="container">
+        <h1>
+          <img class="title-logo" src="asset/logo.png" alt="" />
+          <span><span class="atlas-blue">ATLAS</span>: <span class="atlas-blue">A</span>gen<span class="atlas-blue">t</span>ic or <span class="atlas-blue">La</span>tent Vi<span class="atlas-blue">s</span>ual Reasoning?</span>
+        </h1>
+        <p class="tagline emphasis"><span class="grad">One Word is Enough for Both</span></p>
+
+        <div class="authors">
+          <a href="https://ziyuguo99.github.io/" target="_blank" rel="noopener">Ziyu Guo</a><sup>1,2</sup>,
+          <b>Rain Liu</b><sup>2</sup>,
+          <a href="https://xinyan-cxy.github.io/" target="_blank" rel="noopener">Xinyan Chen</a><sup>1</sup>,
+          <a href="https://www.cse.cuhk.edu.hk/~pheng" target="_blank" rel="noopener">Pheng Ann Heng</a><sup>1</sup>
+          <div class="aff"><sup>1</sup>CUHK &nbsp;&nbsp; <sup>2</sup>Meta</div>
+        </div>
+
+        <div class="buttons">
+          <a class="btn primary" href="https://atlas-oneword.github.io" target="_blank" rel="noopener">Paper</a>
+          <a class="btn" href="https://atlas-oneword.github.io" target="_blank" rel="noopener">Code</a>
+          <a class="btn" href="https://atlas-oneword.github.io" target="_blank" rel="noopener">Model</a>
+          <a class="btn" href="https://atlas-oneword.github.io" target="_blank" rel="noopener">Data</a>
+        </div>
+
+        <figure class="hero-figure">
+          <img src="asset/intro_v4_00.png" alt="ATLAS visual reasoning paradigm teaser." />
+          <figcaption class="caption">Functional tokens internalize visual operations inside the standard autoregressive loop.</figcaption>
+        </figure>
+      </div>
+    </header>
+
+    <section id="method">
+      <div class="container">
+        <div class="method-block">
+          <div class="method-heading">
+            <h3 class="atlas-brand">ATLAS</h3>
+          </div>
+          <figure class="figure">
+            <img src="asset/pipe_sep_00.png" alt="ATLAS pipeline." />
+            <figcaption class="caption">Visual operations are represented as functional tokens and generated like ordinary words.</figcaption>
+          </figure>
+        </div>
+
+        <div class="method-block">
+          <div class="method-heading">
+            <h3>LA-GRPO</h3>
+          </div>
+          <figure class="figure">
+            <img src="asset/lagrpo_00.png" alt="LA-GRPO overview." />
+            <figcaption class="caption">LA-GRPO strengthens sparse functional-token updates and reduces gradient dilution.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="results">
+      <div class="container">
+        <div class="section-title">
+          <h2 class="paper-heading small-title">Better reasoning, lower overhead</h2>
+        </div>
+
+        <div class="table-wrap wide">
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th><th>V*</th><th>WeMath</th><th>BLINK Avg.</th><th>Art.</th><th>Count.</th><th>Forensic.</th><th>IQ</th><th>Jigsaw</th><th>M-view</th><th>Spatial</th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr class="group-row"><td colspan="11">Closed-source Models</td></tr>
+              <tr><td>GPT-4o</td><td>62.8</td><td>50.6</td><td>61.0</td><td>82.9</td><td>49.2</td><td>79.5</td><td>31.3</td><td>55.3</td><td>59.4</td><td>69.2</td></tr>
+              <tr><td>Claude-4-Sonnet</td><td>15.2</td><td>63.0</td><td>49.9</td><td>61.5</td><td>59.2</td><td>35.6</td><td>30.0</td><td>53.3</td><td>47.4</td><td>62.2</td></tr>
+              <tr><td>Gemini-2.0-Flash</td><td>73.3</td><td>47.4</td><td>45.3</td><td>56.4</td><td>55.0</td><td>30.3</td><td>25.3</td><td>48.7</td><td>43.6</td><td>58.0</td></tr>
+              <tr><td>Gemini-2.5-Pro</td><td>79.1</td><td>71.3</td><td>74.6</td><td>85.5</td><td>78.3</td><td>89.4</td><td>43.3</td><td>85.3</td><td>50.4</td><td>90.2</td></tr>
+
+              <tr class="group-row"><td colspan="11">Standard VLMs</td></tr>
+              <tr><td>Qwen2.5-VL</td><td>70.2</td><td>36.2</td><td>22.8</td><td>29.9</td><td>58.3</td><td>0.8</td><td>18.7</td><td>31.3</td><td>0.0</td><td>20.3</td></tr>
+              <tr><td>LLaVA-OneVision-7B</td><td>75.4</td><td>23.1</td><td>36.6</td><td>47.0</td><td>43.3</td><td>25.0</td><td>20.7</td><td>38.7</td><td>33.8</td><td>47.6</td></tr>
+              <tr><td>MiniGPT-v2</td><td>35.6</td><td>11.0</td><td>32.8</td><td>43.6</td><td>13.3</td><td>24.2</td><td>20.3</td><td>34.7</td><td>48.9</td><td>44.8</td></tr>
+              <tr><td>Gemma-3-27B</td><td>62.3</td><td>31.7</td><td>32.1</td><td>42.7</td><td>37.5</td><td>21.2</td><td>16.0</td><td>33.3</td><td>31.6</td><td>42.7</td></tr>
+
+              <tr class="group-row"><td colspan="11">Unified Models</td></tr>
+              <tr><td>Anole</td><td>25.4</td><td>24.7</td><td>16.4</td><td>31.6</td><td>25.0</td><td>11.7</td><td>14.3</td><td>2.0</td><td>3.0</td><td>27.3</td></tr>
+              <tr><td>Bagel</td><td>55.5</td><td>39.4</td><td>51.1</td><td>63.2</td><td>60.8</td><td>37.1</td><td><strong>30.0</strong></td><td>57.3</td><td>39.8</td><td>69.2</td></tr>
+
+              <tr class="group-row"><td colspan="11">Agentic Visual Models</td></tr>
+              <tr><td>Visual CoT</td><td>44.5</td><td>28.6</td><td>44.4</td><td>47.0</td><td>57.5</td><td>25.0</td><td>20.7</td><td>52.7</td><td>44.4</td><td>63.6</td></tr>
+              <tr><td>V-Thinker</td><td>41.4</td><td>32.5</td><td>35.0</td><td>26.9</td><td>43.3</td><td>19.7</td><td>18.7</td><td>42.0</td><td>51.1</td><td>43.4</td></tr>
+              <tr><td>VTS-V</td><td>74.9</td><td>42.8</td><td>51.2</td><td>62.4</td><td>61.7</td><td>32.9</td><td>28.7</td><td>56.1</td><td>49.4</td><td>67.2</td></tr>
+
+              <tr class="group-row"><td colspan="11">Latent Visual Models</td></tr>
+              <tr><td>LVR</td><td>77.5</td><td>41.2</td><td>49.4</td><td>59.0</td><td>60.0</td><td>35.6</td><td>25.3</td><td>52.7</td><td>48.1</td><td>65.0</td></tr>
+              <tr><td>MCOT</td><td>76.4</td><td>39.6</td><td>47.4</td><td>55.6</td><td>57.5</td><td>33.3</td><td>26.7</td><td>50.7</td><td>45.9</td><td>62.2</td></tr>
+              <tr><td>CoVT</td><td>72.8</td><td>38.1</td><td>47.9</td><td>59.0</td><td>60.0</td><td>36.4</td><td>24.0</td><td>41.3</td><td>49.6</td><td>65.0</td></tr>
+              <tr><td>Monet</td><td>77.8</td><td>36.9</td><td>41.8</td><td>41.0</td><td>56.7</td><td>22.7</td><td>28.0</td><td>45.3</td><td>40.5</td><td>58.7</td></tr>
+
+              <tr class="group-row"><td colspan="11">Ours</td></tr>
+              <tr><td>ATLAS<sub>SFT</sub></td><td>77.5</td><td>28.9</td><td>46.0</td><td>50.4</td><td>59.2</td><td>26.5</td><td>26.0</td><td>54.7</td><td>48.1</td><td>57.3</td></tr>
+              <tr><td>ATLAS<sub>GRPO</sub></td><td><strong>77.9</strong></td><td>40.3</td><td>50.5</td><td>57.3</td><td>61.7</td><td>34.1</td><td>26.0</td><td><strong>57.7</strong></td><td>43.6</td><td><strong>70.6</strong></td></tr>
+              <tr><td>ATLAS<sub>LA-GRPO</sub></td><td>75.4</td><td><strong>45.0</strong></td><td><strong>51.3</strong></td><td><strong>65.0</strong></td><td><strong>62.5</strong></td><td><strong>37.9</strong></td><td>26.3</td><td>51.3</td><td><strong>53.4</strong></td><td>62.9</td></tr>
+            
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="visualization">
+      <div class="container">
+        <div class="section-title">
+          <h2 class="paper-heading small-title">Visualization</h2>
+        </div>
+
+        <figure class="hero-figure" style="margin-top: 0;">
+          <img src="asset/vis1_part1_00.png" alt="Qualitative ATLAS examples." />
+          <figcaption class="caption">Qualitative examples of localization, annotation, and visual reasoning with functional tokens.</figcaption>
+        </figure>
+
+        <figure class="hero-figure" style="margin-top: 24px;">
+          <img src="asset/vis_attn1_00.png" alt="Attention visualization around ATLAS functional tokens." />
+          <figcaption class="caption">Attention visualization around functional tokens.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="citation">
+      <div class="container">
+        <div class="section-title">
+          <h2 class="paper-heading">BibTeX</h2>
+        </div>
+        <pre class="bibtex"><code>@article{guo2026atlas,
+  title   = {ATLAS: Agentic or Latent Visual Reasoning? One Word is Enough for Both},
+  author  = {Guo, Ziyu and Liu, Rain and Chen, Xinyan and Heng, Pheng Ann},
+  journal = {arXiv preprint},
+  year    = {2026}
+}</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container"><span class="atlas-blue">ATLAS</span>: Agentic or Latent Visual Reasoning? One Word is Enough for Both</div>
+  </footer>
+</body>
+</html>
